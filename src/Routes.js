@@ -35,37 +35,7 @@ const Routes = () => {
         component={UserListView}
         exact
         layout={MainLayout}
-        path="/users"
-      />
-      <RouteWithLayout
-        component={ProductListView}
-        exact
-        layout={MainLayout}
-        path="/products"
-      />
-      <RouteWithLayout
-        component={TypographyView}
-        exact
-        layout={MainLayout}
-        path="/typography"
-      />
-      <RouteWithLayout
-        component={IconsView}
-        exact
-        layout={MainLayout}
-        path="/icons"
-      />
-      <RouteWithLayout
-        component={AccountView}
-        exact
-        layout={MainLayout}
-        path="/account"
-      />
-      <RouteWithLayout
-        component={SettingsView}
-        exact
-        layout={MainLayout}
-        path="/settings"
+        path="/tasks"
       />
       <RouteWithLayout
         component={SignUpView}
@@ -77,7 +47,7 @@ const Routes = () => {
         component={SignInView}
         exact
         layout={MinimalLayout}
-        path="/sign-in"
+        path="/login"
       />
       <RouteWithLayout
         component={NotFoundView}
