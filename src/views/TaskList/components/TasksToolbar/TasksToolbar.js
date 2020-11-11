@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersToolbar = props => {
+const TasksToolbar = props => {
   const { className, ...rest } = props;
 
   const [description, setDescription] = useState('');
@@ -44,6 +44,14 @@ const UsersToolbar = props => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const task = {
+      descricao: description,
+      categoria: category
+    }
+    props.save(task)
+
+    setDescription("")
+    setCategory("")
   }
 
   const classes = useStyles();
@@ -71,9 +79,10 @@ const UsersToolbar = props => {
               <InputLabel>Categorias:</InputLabel>
               <Select value={category} onChange={e => setCategory(e.target.value)}>
                 <MenuItem value=""> Selecione... </MenuItem>
-                <MenuItem value={'Trabalho'}> Trabalho </MenuItem>
-                <MenuItem value={'Estudo'}> Estudo </MenuItem>
-                <MenuItem value={'Outros'}> Outros </MenuItem>
+                <MenuItem value={'TRABALHO'}> Trabalho </MenuItem>
+                <MenuItem value={'ESTUDOS'}> Estudos </MenuItem>
+                <MenuItem value={'PESSOAL'}> Pessoal </MenuItem>
+                <MenuItem value={'OUTROS'}> Outros </MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -90,8 +99,8 @@ const UsersToolbar = props => {
   );
 };
 
-UsersToolbar.propTypes = {
+TasksToolbar.propTypes = {
   className: PropTypes.string
 };
 
-export default UsersToolbar;
+export default TasksToolbar;

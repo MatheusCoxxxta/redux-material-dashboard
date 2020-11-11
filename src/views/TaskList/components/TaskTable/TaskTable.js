@@ -37,8 +37,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const UsersTable = props => {
-  const { className, users, ...rest } = props;
+const TaskTable = props => {
+  const { className, tasks, ...rest } = props;
 
   const classes = useStyles();
 
@@ -57,7 +57,18 @@ const UsersTable = props => {
                 </TableRow>
               </TableHead>
               <TableBody>
-
+                {
+                  tasks.map(task => (
+                    <TableRow key={task.id}>
+                      <TableCell>{task.id}</TableCell>
+                      <TableCell>{task.descricao}</TableCell>
+                      <TableCell>{task.categoria}</TableCell>
+                      <TableCell>
+                        { !task.done ? 'Pendente' : 'Concluído' }
+                      </TableCell>
+                    </TableRow>
+                  ))
+                }
               </TableBody>
             </Table>
           </div>
@@ -67,9 +78,9 @@ const UsersTable = props => {
   );
 };
 
-UsersTable.propTypes = {
+TaskTable.propTypes = {
   className: PropTypes.string,
   users: PropTypes.array.isRequired
 };
 
-export default UsersTable;
+export default TaskTable;
