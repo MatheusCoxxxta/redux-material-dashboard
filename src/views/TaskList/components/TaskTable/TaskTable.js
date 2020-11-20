@@ -12,8 +12,13 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography
+  Typography,
+  IconButton
 } from '@material-ui/core';
+
+import TimerIcon from '@material-ui/icons/Timer';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import { getInitials } from 'helpers';
 
@@ -54,21 +59,31 @@ const TaskTable = props => {
                   <TableCell>Descrição</TableCell>
                   <TableCell>Categoria</TableCell>
                   <TableCell>Estados</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {
-                  tasks.map(task => (
-                    <TableRow key={task.id}>
-                      <TableCell>{task.id}</TableCell>
-                      <TableCell>{task.descricao}</TableCell>
-                      <TableCell>{task.categoria}</TableCell>
-                      <TableCell>
-                        { !task.done ? 'Pendente' : 'Concluído' }
-                      </TableCell>
-                    </TableRow>
-                  ))
-                }
+                {tasks.map(task => (
+                  <TableRow key={task.id}>
+                    <TableCell>{task.id}</TableCell>
+                    <TableCell>{task.descricao}</TableCell>
+                    <TableCell>{task.categoria}</TableCell>
+                    <TableCell>
+                      {!task.done ? 'Pendente' : 'Concluído'}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={e => props.statusUpdate(task.id)}>
+                        {task.done ? <DoneAllIcon color="secondary" /> : <TimerIcon color="secondary" />}
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>
+                      <IconButton onClick={e => props.deleteTask(task.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>

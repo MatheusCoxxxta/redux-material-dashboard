@@ -63,7 +63,7 @@ const TasksToolbar = props => {
       </div>
       <div className={classes.row}>
         <Grid container>
-          <Grid item md={4}>
+          <Grid item md={6}>
             <TextField
               className={classes.searchInput}
               placeholder="Descrição da tarefa"
