@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { list, save, destroy, statusUpdate } from '../../store/taskReducer';
+import { hide } from '../../store/alertReducer';
 
 import { TasksToolbar, TaskTable } from './components';
 
@@ -12,10 +16,6 @@ import {
   DialogTitle
 } from '@material-ui/core';
 
-import axios from 'axios';
-let api = axios;
-const apiUrl = 'https://minhastarefas-api.herokuapp.com';
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3)
@@ -25,118 +25,55 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const TaskList = () => {
+const TaskList = props => {
   const classes = useStyles();
 
-  const [tasks, setTasks] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false)
-  const [messageTitle, setMessageTitle] = useState("Atenção")
-  const [message, setMessage] = useState("")
-
-  const getTasks = () => {
-    api
-      .get(`${apiUrl}/tarefas`, {
-        headers: {
-          'x-tenant-id': localStorage.getItem("@user:session-login")
-        }
-      })
-      .then(response => {
-        setTasks(response.data);
-      })
-      .catch(error => {
-        setMessage('Ocorreu um erro ao tentar buscar tarefas...');
-        setOpenDialog(true);
-      });
-  };
-
-  const save = task => {
-    api
-      .post(apiUrl + '/tarefas', task, {
-        headers: {
-          'x-tenant-id': localStorage.getItem("@user:session-login")
-        }
-      })
-      .then(response => {
-        setTasks([...tasks, response.data]);
-        setMessage('O item foi adicionado com sucesso!');
-        setOpenDialog(true);
-      })
-      .catch(error => {
-        setMessage('Ocorreu um erro ao tentar adicionar tarefa...');
-        setOpenDialog(true);
-      });
-  };
-
-  const statusUpdate = id => {
-    api
-      .patch(`${apiUrl}/tarefas/${id}`, null, {
-        headers: {
-          'x-tenant-id': localStorage.getItem("@user:session-login")
-        }
-      })
-      .then(response => {
-        const taskList = [...tasks];
-        taskList.forEach(task => {
-          if (task.id === id) {
-            task.done = true;
-          }
-        });
-        setTasks(taskList);
-        setMessage('O item foi atualizado com sucesso!');
-        setOpenDialog(true);
-      })
-      .catch(error => {
-        setMessage('Ocorreu um erro ao tentar atualizar status tarefa...');
-        setOpenDialog(true);
-      });
-  };
-
-  const deleteTask = id => {
-    api
-      .delete(`${apiUrl}/tarefas/${id}`, {
-        headers: {
-          'x-tenant-id': localStorage.getItem("@user:session-login")
-        }
-      })
-      .then(response => {
-        const taskList = tasks.filter(task => task.id !== id);
-        setTasks(taskList);
-        setMessage('O item foi deletado com sucesso!');
-        setOpenDialog(true);
-      })
-      .catch(error => {
-        setMessage('Ocorreu um erro ao tentar deletar tarefa...');
-        setOpenDialog(true);
-      });
-  };
-
   useEffect(() => {
-    getTasks();
+    props.list();
   }, []);
 
   return (
     <div className={classes.root}>
-      <TasksToolbar save={save} />
+      <TasksToolbar save={props.save} />
       <div className={classes.content}>
         <TaskTable
-          statusUpdate={statusUpdate}
-          deleteTask={deleteTask}
-          tasks={tasks}
+          statusUpdate={props.statusUpdate}
+          deleteTask={props.destroy}
+          tasks={props.tasks}
         />
       </div>
-      <Dialog open={openDialog} onClose={e => setOpenDialog(false)}>
-        <DialogTitle>{messageTitle}</DialogTitle>
+      <Dialog open={props.openDialog} onClose={props.hide}>
+        <DialogTitle>Atenção</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {message}
-          </DialogContentText>
+          <DialogContentText>{props.message}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={e => setOpenDialog(false)}>Fechar</Button>
+          <Button onClick={props.hide}>Fechar</Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 };
 
-export default TaskList;
+const mapStateToProps = state => ({
+  tasks: state.tasks.tasks,
+  message: state.alert.message,
+  openDialog: state.alert.dialog
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      list,
+      save,
+      destroy,
+      statusUpdate,
+      hide
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TaskList);
